@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Container Yard Check-In</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h2 {
+      color: #333;
+    }
+    input, select, button {
+      margin: 10px 0;
+      padding: 8px;
+      width: 100%;
+      font-size: 16px;
+    }
+    button {
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h2>📦 Container Yard – Check In</h2>
+
+  <div>
+    <button onclick="selectCheckin('incoming')">Incoming</button>
+    <button onclick="selectCheckin('outgoing')">Outgoing</button>
+  </div>
+
+  <form id="checkinForm" style="display: none;">
+    <h3 id="formTitle"></h3>
+    <input type="text" id="containerNumber" placeholder="Container Number" required />
+    <input type="text" id="driverName" placeholder="Driver Name" />
+    <input type="text" id="transportName" placeholder="Transport Name" required />
+    <button type="submit">Submit Check-In</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    let checkinType = "";
+
+    function selectCheckin(type) {
+      checkinType = type;
+      document.getElementById("formTitle").innerText = `Submit ${type} container`;
+      document.getElementById("checkinForm").style.display = "block";
+      document.getElementById("result").innerText = "";
+    }
+
+    document.getElementById("checkinForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        containerNumber: document.getElementById("containerNumber").value,
+        driverName: document.getElementById("driverName").value,
+        transportName: document.getElementById("transportName").value,
+      };
+
+      try {
+        const res = await fetch(`http://localhost:5050/api/checkin/${checkinType}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          document.getElementById("result").innerText = `✅ Assigned Lot: ${result.assignedLot}`;
+        } else {
+          document.getElementById("result").innerText = `❌ ${result.message}`;
+        }
+      } catch (err) {
+        document.getElementById("result").innerText = "❌ Could not connect to backend.";
+      }
+    });
+  </script>
+</body>
+</html>
