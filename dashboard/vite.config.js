@@ -3,12 +3,12 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  root: '.', // optional and kept
   build: {
     outDir: 'dist'
   },
   preview: {
+    port: 10000,
     host: '0.0.0.0',
-    port: 10000
+    allowedHosts: ['container-yard-frontend.onrender.com']  // ✅ Add this line
   }
 });
