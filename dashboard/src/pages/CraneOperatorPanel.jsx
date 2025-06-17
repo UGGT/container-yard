@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import BackgroundWrapper from "../components/BackgroundWrapper";
 
 const CraneOperatorPanel = () => {
   const [assignments, setAssignments] = useState([]);
@@ -42,6 +43,7 @@ const CraneOperatorPanel = () => {
   }, []);
 
   return (
+    <BackgroundWrapper>
     <div className="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-md">
       <ToastContainer position="bottom-right" autoClose={3000} />
       <h2 className="text-2xl font-bold mb-4">🛠️ Crane Operator Panel</h2>
@@ -81,6 +83,7 @@ const CraneOperatorPanel = () => {
         </table>
       )}
     </div>
+    </BackgroundWrapper>
   );
 };
 
