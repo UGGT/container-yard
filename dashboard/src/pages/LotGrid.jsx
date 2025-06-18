@@ -5,8 +5,12 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BackgroundWrapper from "../components/BackgroundWrapper";
 
-// 🌐 Production backend URL
-const BACKEND_URL = "https://container-yard-1.onrender.com";
+// ✅ Dynamically determine backend based on environment
+const BACKEND_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5050"
+    : "https://container-yard-1.onrender.com";
+
 const socket = io(BACKEND_URL, { transports: ["websocket"] });
 
 const LotGrid = () => {
