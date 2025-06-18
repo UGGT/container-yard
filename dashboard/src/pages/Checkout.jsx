@@ -4,6 +4,13 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BackgroundWrapper from "../components/BackgroundWrapper";
 
+
+const BACKEND_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5050"
+    : "https://container-yard-1.onrender.com";
+
+
 const Checkout = () => {
   const [form, setForm] = useState({
     containerNumber: "",

@@ -5,6 +5,12 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BackgroundWrapper from "../components/BackgroundWrapper";
 
+
+const BACKEND_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5050"
+    : "https://container-yard-1.onrender.com";
+
 const Checkin = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -27,7 +33,7 @@ const Checkin = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5050/api/checkins/incoming",
+        "https://container-yard-1.onrender.com/api/checkins/incoming",
         {
           containerNumber: form.containerNumber,
           driverName: form.driverName,

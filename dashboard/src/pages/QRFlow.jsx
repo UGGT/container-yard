@@ -2,6 +2,12 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import BackgroundWrapper from "../components/BackgroundWrapper";
 
+
+const BACKEND_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5050"
+    : "https://container-yard-1.onrender.com";
+
 const QRFlow = () => {
   const navigate = useNavigate();
 
