@@ -10,18 +10,24 @@ exports.findAvailableLot = async () => {
 
 // Mark lot as occupied
 exports.markLotOccupied = async (lotCode) => {
-  await db.query(
+  const result = await db.query(
     'UPDATE yard_lots SET is_occupied = true, updated_at = NOW() WHERE lot_code = $1',
     [lotCode]
   );
+  if (result.rowCount === 0) {
+    console.warn(`⚠️ Failed to mark lot as occupied: ${lotCode}`);
+  }
 };
 
 // Mark lot as available
 exports.markLotAvailable = async (lotCode) => {
-  await db.query(
+  const result = await db.query(
     'UPDATE yard_lots SET is_occupied = false, updated_at = NOW() WHERE lot_code = $1',
     [lotCode]
   );
+  if (result.rowCount === 0) {
+    console.warn(`⚠️ Failed to mark lot as available: ${lotCode}`);
+  }
 };
 
 // Get all lots (optional utility)

@@ -1,5 +1,9 @@
 const { logCheckin } = require('../models/checkinModel');
-const { findAvailableLot, markLotOccupied } = require('../models/yardLotModel');
+const {
+  findAvailableLot,
+  markLotOccupied,
+  markLotAvailable
+} = require('../models/yardLotModel');
 const { notifyCraneOperator, notifyDriver } = require('../services/notificationService');
 const db = require('../config/db');
 
@@ -58,13 +62,13 @@ exports.incoming = async (req, res) => {
       transport_phone: transportPhone,
     });
 
-    console.log("📝 Logged check-in:", log?.id || 'OK');
+    console.log("✅ Logged check-in:", log?.id || 'OK');
 
-    // 🔔 App-based Notification
+    // App-based Notification
     notifyDriver({ containerNumber, lotCode: assignedLot });
     notifyCraneOperator({ containerNumber, lotCode: assignedLot, type: 'incoming' });
 
-    // 📲 SMS Notification Placeholder
+    // SMS Notification Placeholder
     if (driverPhone) {
       console.log(`📲 [Mock SMS to Driver] Container ${containerNumber}: Proceed to Lot ${assignedLot}`);
       // sendSMS(driverPhone, `Proceed to Lot ${assignedLot} for container ${containerNumber}`);
@@ -89,7 +93,7 @@ exports.incoming = async (req, res) => {
     return res.json({ status: 'incoming_registered', assignedLot, log });
 
   } catch (err) {
-    console.error("🔥 Incoming Check-In Error:", err.stack || err);
+    console.error("❌ Incoming Check-In Error:", err.stack || err);
     return res.status(500).json({ message: "Internal server error", details: err.message });
   }
 };
@@ -115,7 +119,7 @@ exports.outgoing = async (req, res) => {
     }
 
     const assignedLot = existing.rows[0].assigned_lot;
-    console.log("📦 Found assigned lot for outgoing:", assignedLot);
+    console.log("✅ Found assigned lot for outgoing:", assignedLot);
 
     const log = await logCheckin({
       type: 'outgoing',
@@ -126,6 +130,10 @@ exports.outgoing = async (req, res) => {
       user_id: req.user?.id,
     });
 
+    // ✅ Mark the lot as available again
+    await markLotAvailable(assignedLot);
+    console.log("🔓 Marked lot as available:", assignedLot);
+
     notifyDriver({ containerNumber, lotCode: assignedLot });
     notifyCraneOperator({ containerNumber, lotCode: assignedLot, type: 'outgoing' });
 
@@ -134,7 +142,7 @@ exports.outgoing = async (req, res) => {
       io.emit('lot_update', {
         event: 'outgoing_checkin',
         lotCode: assignedLot,
-        status: 'occupied',
+        status: 'available',
         containerNumber,
         driverName,
         transportName,
